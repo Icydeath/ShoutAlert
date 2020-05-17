@@ -1,7 +1,10 @@
 _addon.name = 'ShoutAlert'
 _addon.author = 'Icy'
-_addon.version = '1.0.1'
+_addon.version = '1.0.3'
 _addon.commands = {'shoutalert','sa'}
+
+-- 1.0.3: Display now wraps the added words in quotes, so spaces can be identified. ie: " Ou "
+-- 1.0.2: ignores your shouts if a word matches
 
 require('luau')
 require('tables')
@@ -16,11 +19,13 @@ default = {
 }
 settings = config.load(default)
 
+self = windower.ffxi.get_player().name
+
 display_box = function()
 	local header = ' [ Shout Alerts ] \n'
     local str = header
 	for word in pairs(settings.words) do
-		str = str..'> '..tostring(word)..' \n'
+		str = str..'> "'..tostring(word)..'" \n'
 	end
 	if str == header then str = str..'Add cmd: //sa a "Text to find" \n' end
 	
@@ -99,19 +104,17 @@ function addon_command(...)
 end
 
 function help_msg()
-	local str = [[Commands
-Alerting on text in shout
- //sa [add|remove] [StringToAlertOn] - adds or removes the alert text from the list.
-Ignoring specific player shouts
- //sa [ignore|i] [add|remove] [PlayerName] - adds or removes the player from the list.
-Clearing lists
- //sa [clear|c] - clears all alerts and shouts
- //sa [clear|c] [alerts|a|ingores|i] - clears specified list
-Saving lists
- //sa [save] - saves the lists to the settings.xml
-]]
-	
-	return str
+	return [[Commands
+	Alerting on text in shout
+	 //sa [add|remove] [StringToAlertOn] - adds or removes the alert text from the list.
+	Ignoring specific player shouts
+	 //sa [ignore|i] [add|remove] [PlayerName] - adds or removes the player from the list.
+	Clearing lists
+	 //sa [clear|c] - clears all alerts and shouts
+	 //sa [clear|c] [alerts|a|ingores|i] - clears specified list
+	Saving lists
+	 //sa [save] - saves the lists to the settings.xml
+	]]
 end
 
 function loaded()
@@ -137,6 +140,10 @@ windower.register_event("incoming text", function(original,modified,original_mod
 end)
 
 function ignore_shout(str)
+	if windower.wc_match(str, "*"..self.."*") then
+		return true
+	end
+	
 	for w in pairs(settings.ignores) do
 		if (windower.wc_match(str, "*"..w.."*")) then
 			return true
