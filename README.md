@@ -14,8 +14,15 @@ Commands
 
 - //sa [clear|c] - clears all alerts and shouts
  
-- //sa [clear|c] [alerts|a|ingores|i] - clears specified list
+- //sa [clear|c] [alerts|a|ignores|i] - clears specified list
  
 **Saving lists**
 
 - //sa [save] - saves the lists to the settings.xml
+
+**Examples**
+
+- //sa add Zerde
+- //sa add " Ou "
+- //sa ignore Gorby
+- //sa remove Zerde
