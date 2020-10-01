@@ -24,7 +24,7 @@ Commands
 
 **Sets**
 
-- //sa set - lists saved set names
+- //sa set - lists saved sets
 
 - //sa set list - does the same thing as above.
 
