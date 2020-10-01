@@ -1,9 +1,10 @@
 _addon.name = 'ShoutAlert'
 _addon.author = 'Icy'
-_addon.version = '1.0.4'
+_addon.version = '1.0.5'
 _addon.commands = {'shoutalert','sa'}
 
--- 1.0.4: Added new commands. //sa ls - shows last shouts for alert words, //sa sound - toggles alert sounds on/off.
+-- 1.0.5: added the ability to save/load a set of alerts.
+-- 1.0.4: Added new commands. //sa ls - shows last shouts for each alert word, //sa sound - toggles alert sound on/off.
 -- 1.0.3: Display now wraps the added words in quotes, so spaces can be identified. ie: " Ou "
 -- 1.0.2: ignores your shouts if a word matches
 
@@ -17,6 +18,7 @@ self = windower.ffxi.get_player().name
 default = {
 	words = S{'Ambuscade','Zerde','Vinipata','Albumen'},
 	ignores = S{},
+	word_sets = {['default'] = S{'Zerde','Albumen'}},
 	doublebass = true,
 	text = {text={size=10}},
 	shout_text = {text={size=10}},
@@ -95,6 +97,35 @@ function addon_command(...)
 			else
 				log('show last shouts disabled.')
 			end
+		elseif commands[1] == 'set' then
+			if commands[2] and commands[3] then
+				commands[2] = commands[2]:lower()
+				commands[3] = commands[3]:lower()
+				if commands[2] == 'save' or commands[2] == 's' or commands[2] == 'add' or commands[2] == 'a' then					
+					settings.word_sets[commands[3]] = settings.words
+					settings:save('all')
+					log('Saved set as:', commands[3])
+				elseif commands[2] == 'remove' or commands[2] == 'r' then
+					if settings.word_sets[commands[3]] then
+						settings.word_sets[commands[3]] = nil
+						settings:save('all')
+						log('Removed set:', commands[3])
+					end
+				end
+			elseif commands[2] and commands[2]:lower() == 'list' then
+				for i,words in pairs(settings.word_sets) do
+					log('"'..i..'" =', words:concat(', '))
+				end
+			elseif commands[2] then
+				if settings.word_sets[commands[2]] then
+					settings.words = settings.word_sets[commands[2]]
+					log("Loaded set:", commands[2])
+				end
+			else
+				for i,words in pairs(settings.word_sets) do
+					log('"'..i..'" =', words:concat(', '))
+				end
+			end
 		elseif commands[1] == 'ignore' or commands[1] == 'i' then
 			if commands[2] == 'add' or commands[2] == 'a' then
 				settings.ignores:add(commands[3])
@@ -143,8 +174,8 @@ function addon_command(...)
 				end
 			end
 		elseif commands[1] == 'save' then
-			settings:save()
-			log('lists saved.')
+			settings:save('all')
+			log('Alerts saved.')
 		elseif commands[1] == 'help' or commands[1] == 'h' then
 			log(helpmsg)
 		end

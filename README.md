@@ -22,13 +22,29 @@ Commands
  
 - //sa sound - Toggles the alert sound on/off
 
-**Saving lists**
+**Sets**
 
-- //sa [save] - saves the lists to the settings.xml
+- //sa set - lists saved set names
+
+- //sa set list - does the same thing as above.
+
+- //sa set [setname] - loads [setname]
+
+- //sa set [save|s] [setname] - saves current alerts to [setname]
+
+- //sa set [remove|r] [setname] - removes [setname] from settings.xml
+
+**Save**
+
+- //sa [save] - saves all settings
 
 **Examples**
 
 - //sa add Zerde
 - //sa add " Ou "
-- //sa ignore Gorby
 - //sa remove Zerde
+- //sa ignore Gorby
+- //sa ignore remove Gorby
+- //sa set list
+- //sa set save helms
+- //sa set helms
